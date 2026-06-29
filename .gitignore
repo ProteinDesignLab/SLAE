@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# OS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# SLAE runtime artifacts
+outputs/
+processed/
+*.pdb
+!**/configs/**/*.pdb
+
+# Environments
+.venv/
+venv/
+.env

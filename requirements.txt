@@ -1,0 +1,37 @@
+# SLAE inference dependencies (plain-pip path).
+#
+# IMPORTANT: install torch and the PyTorch Geometric companion wheels FIRST,
+# from the wheel index matching your torch + CUDA build. For example, for
+# torch 2.6 + CUDA 12.4:
+#
+#   pip install torch==2.6.0
+#   pip install torch-scatter torch-cluster torch-sparse \
+#       -f https://data.pyg.org/whl/torch-2.6.0+cu124.html
+#
+# Then: pip install -r requirements.txt && pip install -e .
+
+torch>=2.2
+# torch-geometric 2.8 routes radius_graph through pyg-lib; pin to the 2.7
+# implementation the featurizer expects (torch_cluster-backed).
+torch-geometric==2.7.0
+torch-scatter
+torch-cluster
+torch-sparse
+torch-runstats
+e3nn>=0.5
+einops
+einx
+opt-einsum-fx
+esm>=3.0
+hydra-core>=1.3
+omegaconf>=2.3
+lightning>=2.2
+numpy<2
+biotite
+biopandas
+atomworks
+pandas
+loguru
+tqdm
+pyyaml
+packaging

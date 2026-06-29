@@ -1,0 +1,108 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SLAE"
+version = "0.1.0"
+description = "Strictly Local All-atom Environment for Protein Representation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Yilin Chen", email = "yilinc5@stanford.edu" },
+]
+keywords = [
+    "protein structure",
+    "representation learning",
+    "graph neural network",
+    "all-atom",
+    "autoencoder",
+]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# Runtime dependencies for autoencoder loading + inference.
+#
+# NOTE: `torch` and the PyTorch Geometric companion wheels
+# (`torch-scatter`, `torch-cluster`, `torch-sparse`, `torch-runstats`) are
+# compiled against a specific torch + CUDA build. On most systems you should
+# install torch first and then the companion wheels from the matching PyG wheel
+# index BEFORE `pip install SLAE` (see the README "Installation" section).
+# They are listed here so the dependency specification is complete.
+dependencies = [
+    "torch>=2.2",
+    # Pinned: torch-geometric 2.8 routes `radius_graph` through pyg-lib, whereas
+    # the featurizer relies on the torch_cluster-backed implementation in 2.7.
+    "torch-geometric==2.7.0",
+    "torch-scatter",
+    "torch-cluster",
+    "torch-sparse",
+    "torch-runstats",
+    "e3nn>=0.5",
+    "einops",
+    "einx",
+    "opt-einsum-fx",
+    "esm>=3.0",
+    "hydra-core>=1.3",
+    "omegaconf>=2.3",
+    "lightning>=2.2",
+    "numpy<2",
+    "biotite",
+    "biopandas",
+    "atomworks",
+    "pandas",
+    "loguru",
+    "tqdm",
+    "pyyaml",
+    "packaging",
+]
+
+[project.optional-dependencies]
+viz = ["py3dmol"]
+dev = ["pytest>=7", "ruff>=0.4"]
+
+[project.urls]
+Homepage = "https://github.com/possu-lab/SLAE"
+Paper = "https://www.biorxiv.org/content/10.1101/2025.10.03.680398v1"
+
+[tool.setuptools.packages.find]
+include = ["SLAE*"]
+
+[tool.setuptools.package-data]
+SLAE = ["configs/**/*.yaml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+# Keep the public release lint-clean without being noisy about research-code
+# idioms (unused star-imports in nn building blocks, etc.).
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E741", "F403", "F405"]
+
+[tool.ruff.lint.per-file-ignores]
+# Inherited research internals are kept functionally byte-identical for this
+# release (only whitespace/import-order are auto-formatted). We therefore do not
+# enforce lint rules on them that would require logic edits -- e.g. a
+# load-bearing duplicate key in `RES_TYPE_MAP` the pretrained model relies on,
+# unused transform-registry imports, and an alternate decode path not used by
+# the default config.
+"SLAE/nn/**" = ["F401", "F811", "F841"]
+"SLAE/model/**" = ["F401", "F811", "F821", "F841", "E712"]
+"SLAE/features/**" = ["F401"]
+"SLAE/io/**" = ["F401"]
+"SLAE/datasets/**" = ["F401"]
+"SLAE/util/**" = ["F401", "F811", "F841", "F601"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
